@@ -47,24 +47,10 @@ Todos los plugins, plantillas y núcleo del CMS (`WordPress`/`Joomla`) serán re
 
 ---
 
-## Plantilla de registro de respaldos
+## Registro de respaldos
 
-### Respaldos manuales (mantener los últimos 3)
+Cada desarrollador es responsable de mantener un registro de los respaldos de sus sitios.
 
-| # | Fecha | Evento | Nombre del archivo | Localización del respaldo | Borrar después de |
-|---|---|---|---|---|---|
-| *Ej* | *2026-07-23* | *Antes de incidente de seguridad* | *backup-7.23.2026_site.tar.gz* | *Google Drive / Clientes* | *Cuando se agregue el respaldo #4* |
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-
-> Al agregar una fila, borrar la más antigua.
-
-### Último respaldo limpio (mantenerlo indefinidamente o durante mínimo 6 meses sin incidentes)
-
-| Fecha | Contexto | Nombre del archivo | Localización del respaldo | Es seguro borrar después de |
-|---|---|---|---|---|
-| *Ej* | *Post incidente DDoS julio 2026. Sitio limpio verificado por Imunify* | *backup-7.23.2026_site_clean.tar.gz* | *Google Drive / Clientes* | *Enero 2027* |
-| | | | | |
+Se provee una plantilla de registro en [`templates/backup-log.md`](./templates/backup-log.md).
 
 ---
