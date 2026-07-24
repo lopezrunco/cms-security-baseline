@@ -1,23 +1,23 @@
-# Runbook: Restauracion de sitios Wordpress en entorno local usando Docker
+# Runbook: Restauración de sitios WordPress en entorno local usando Docker
 
 **Stack:** cPanel - Docker - MySQL - WordPress  
-**Ultima actualizacion:** 23-07-2026
+**Última actualización:** 23-07-2026
 **Objetivo:** Probar la integridad de los respaldos sin tocar produccion.
 
 ---
 
-## Prerequisitos
+## Prerrequisitos
 
-- Docker y Docker compose instalados.
-- Respaldo completo desde cPanel descargado localmente (`.tar.gz`).
+- `Docker` y `Docker Compose` instalados.
+- Respaldo completo desde `cPanel` descargado localmente (`.tar.gz`).
 
 ---
 
-## Paso 1: Descargar el respaldo completo desde el cPanel => Asistente de copias de seguridad
+## Paso 1: Descargar el respaldo completo desde cPanel => Asistente de copias de seguridad
 
-Esto generara generara un archivo `.tar.gz` que contiene:
-- `homedir/public_html.zip` : Todos los archivos de Wordpress.
-- `mysql/your_database.sql` : Volcado completo de la base de datos.
+Esto generará un archivo `.tar.gz` que contiene:
+- `homedir/public_html.zip`: Todos los archivos de `WordPress`.
+- `mysql/your_database.sql`: Volcado completo de la base de datos.
 
 ## Paso 2: Preparar el directorio de trabajo
 
@@ -32,7 +32,7 @@ Extraer el respaldo:
 tar -xzf your_backup_file.tar.gz
 ```
 
-Extraer los archivos de wordPress:
+Extraer los archivos de `WordPress`:
 
 ```bash
 cd backup-*/homedir
@@ -43,8 +43,8 @@ cd ../../
 Verificar estructura:
 
 ```bash
-ls wp-restore/public_html/wp-config.php  # Debe de existir
-ls backup-*/mysql/*.sql                  # Debe de existir
+ls wp-restore/public_html/wp-config.php  # Debe existir
+ls backup-*/mysql/*.sql                  # Debe existir
 ```
 
 ## Paso 3: Crear el archivo docker-compose.yml
@@ -86,7 +86,7 @@ Reemplazar `your_database_name` con el nombre real del archivo `.sql` (omitir la
 
 ```bash
 docker compose up -d
-docker compose ps       # Verificar que tanto la base de datos como wordpress estan corriendo.
+docker compose ps       # Verificar que tanto la base de datos como WordPress están corriendo.
 ```
 
 ## Problemas comunes en esta etapa
@@ -96,14 +96,14 @@ docker compose ps       # Verificar que tanto la base de datos como wordpress es
 ```
 Bind for 0.0.0.0:8090 failed: port is already allocated
 ```
-Cambiar el puerto en el archivo docker-compose.yml: `8090:80` => `8091:80` o cualquier otro puerto libre.
+Cambiar el puerto en el archivo `docker-compose.yml`: `8090:80` => `8091:80` o cualquier otro puerto libre.
 
 ### Problema 2: Error de propiedad de archivos (Error 403)
 
 ```
 AH00529: unable to check htaccess file, ensure it is readable
 ```
-Arreglar propiedad:
+Corregir propiedad:
 ```bash
 docker exec -it <wordpress-container-name> chown -R www-data:www-data /var/www/html
 ```
@@ -114,7 +114,7 @@ docker exec -it <wordpress-container-name> chown -R www-data:www-data /var/www/h
 Invalid command 'CacheLookup'
 Invalid command 'vErrorDocument'
 ```
-Eliminar bloques de codigo de LiteSpeed en el archivo `.htaccess` dentro del contenedor:
+Eliminar bloques de código de `LiteSpeed` en el archivo `.htaccess` dentro del contenedor:
 ```bash
 docker exec -it <wordpress-container-name> bash
 sed -i '/# BEGIN LSCACHE/,/# END LSCACHE/d' /var/www/html/.htaccess
@@ -125,24 +125,24 @@ exit
 
 ### Problema 4: Redireccion HTTPS causando error SSL
 
-El bloque `Forzar HTTPS` en el archivo `.htaccess` redirige hacia `https://localhost`, el cual no tiene un certificado SSL.
+El bloque `Forzar HTTPS` en el archivo `.htaccess` redirige hacia `https://localhost`, que no tiene un certificado `SSL`.
  
-La solucion es eliminar el bloque `Forzar HTTPS` dentro del contenedor:
+La solución es eliminar el bloque `Forzar HTTPS` dentro del contenedor:
 ```bash
 docker exec -it <wordpress-container-name> bash
 sed -i '/# Force HTTPS (safety net)/,/^$/d' /var/www/html/.htaccess
 exit
 ```
  
-Tambien limpiar la cache `HSTS` en el navegador:
+También limpiar la caché `HSTS` en el navegador:
 - **Firefox:** Configuración => Privacidad y seguridad => Cookies y datos del sitio => Administrar datos => eliminar `localhost`.
 - **Chrome:** acceder a `chrome://net-internals/#hsts` => Eliminar dominio: `localhost`.
 
-### Problema 5: Error de coneccion con la base de datos
+### Problema 5: Error de conexión con la base de datos
 
 Este error es disparado porque `wp-config.php` aun tiene las credenciales de produccion.
  
-La solucion es actualizar las credenciales dentro dle contenedor:
+La solución es actualizar las credenciales dentro del contenedor:
 ```bash
 docker exec -it <wordpress-container-name> bash
 sed -i "s/define( 'DB_NAME'.*/define( 'DB_NAME', 'your_database_name' );/" /var/www/html/wp-config.php
@@ -157,20 +157,20 @@ Verificar:
 docker exec -it <wordpress-container-name> grep -E "DB_NAME|DB_USER|DB_PASSWORD|DB_HOST" /var/www/html/wp-config.php
 ```
 
-## Paso 5: Verificar la restauracion
+## Paso 5: Verificar la restauración
 
 Navegar a `http://localhost:8090` y confirmar:
 - La pagina de inicio carga correctamente.
 - Productos/contenido visible.
-- Inicio de sesion en el administrador funciona correctamente.
+- Inicio de sesión en el administrador funciona correctamente.
 - No hay errores PHP visibles.
 
-## Paso 7: Limpieza
+## Paso 6: Limpieza
 
 ```bash
 docker compose down -v
 ```
  
-`-v` elimina la base de datos. Ningun dato sensible queda alojado localmente.
+`-v` elimina la base de datos. Ningún dato sensible queda alojado localmente.
 
 ---
