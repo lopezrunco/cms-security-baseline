@@ -25,6 +25,14 @@
 - [ ] Agregar captcha a todos los formularios públicos (Cloudflare Turnstile recomendado).
 - [ ] Verificar que los salts en `wp-config.php` son únicos (generarlos en <https://api.wordpress.org/secret-key/1.1/salt/>).
 - [ ] Crear una plantilla hija antes de personalizar.
+- [ ] Verificar que las claves y salts de `wp-config.php` se rotan después de cualquier incidente de exposición de credenciales.
+- [ ] Confirmar que `WP_DEBUG_LOG` está habilitado (`true`) y `WP_DEBUG_DISPLAY` deshabilitado (`false`) — errores al archivo, nunca al navegador.
+- [ ] Auditar todas las cuentas de usuario, eliminar cuentas heredadas o de prueba con credenciales no rotadas.
+- [ ] Verificar que el plugins de migración (como `All-in-One WP Migration`) no estén instalados en producción. Si lo están, confirmar que el directorio de backups no es accesible públicamente.
+- [ ] Aplicar principio de mínimo privilegio en cuentas de usuario:
+    - Administrador: solo personal técnico
+    - Gestor de tienda: cliente/operaciones
+    - Nunca compartir cuentas entre personas
 
 ### Hosting / cPanel
 
@@ -33,19 +41,24 @@
 - [ ] Chequear que ModSecurity WAF esté habilitado en cPanel.
 - [ ] Restringir el listado de directorio en `.htaccess` (`Options -Indexes`).
 - [ ] Confirmar que la versión de PHP sea reciente.
+- [ ] Confirmar que NO existen archivos de backup en `public_html` (`.wpress`, `.tar.gz`, `.zip`, `.sql`).
+- [ ] Verificar accesibilidad directa de directorios de backup visitando sus URLs en el navegador.
 
 ---
 
 ## Fase 2: Auditoría de plantilla y plugins
 
 ### Plantilla
+- [ ] Confirmar que la licencia de la plantilla está activa y es renovable. Una licencia vencida impide actualizaciones y crea una deuda de seguridad permanente.
 - [ ] Auditar y eliminar contenido demo, sliders, páginas y productos de ejemplo.
 - [ ] Registrar la licencia de la plantilla para recibir notificaciones de actualizaciones.
 - [ ] Deshabilitar funcionalidades de la plantilla que no se usen (page builders, encabezados sin usar).
 - [ ] Confirmar que la plantilla hija está activa antes de cualquier personalización.
+- [ ] Auditar plugins bundled dentro de la plantilla (ej: `Slider Revolution` dentro de `Divi`) — pueden tener CVEs propios y no actualizarse de forma independiente.
 
 ### Plugins
 - [ ] Auditar todos los plugins instalados y eliminar los que no sean necesarios.
+- [ ] Para cada plugin: verificar en `Wordfence Threat Intel` o `WPScan` si hay CVEs conocidos en la versión instalada.
 - [ ] Actualizar todos los plugins a la última versión.
 - [ ] Instalar `Wordfence`/`Akeeba Admin Tools `(WAF y protección en el login).
 - [ ] Instalar `WP Activity Log` para auditar actividad.
@@ -59,6 +72,9 @@
 ### Configuración básica
 - [ ] Establecer correctamente país y moneda.
 - [ ] En el caso de modo catálogo, configurarlo mediante [PHP](./docs/Configure-catalog-mode-via-Code-Snippets.php).
+- [ ] Verificar que el gateway de pago (`Mercado Pago`, `Handy`, etc.) está actualizado. Los plugins de pago son objetivos de alto valor y frecuentemente parchean vulnerabilidades silenciosamente.
+- [ ] Confirmar que el gateway maneja los datos de tarjeta en su propia infraestructura (nunca en el servidor del sitio).
+- [ ] Ejecutar DB migration de WooCommerce inmediatamente después de actualizar el plugin — no dejar pendiente.
 
 ### Cuenta para el cliente
 - [ ] Crear cuenta de tipo **Gestor de la tienda** (nunca Administrador).
@@ -69,6 +85,7 @@
 
 ## Fase 4: Pre-lanzamiento y revisión de Seguridad
 - [ ] Ejecutar escáner de seguridad (`WPScan`, `Imunify`) en el sitio y resolver vulnerabilidades críticas.
+- [ ] Documentar decisiones de riesgo aceptado — cualquier vulnerabilidad que no se pueda remediar debe tener: rationale documentado, compensating controls aplicados, y fecha de revisión.
 - [ ] Verificar que no hay datos sensibles en el código fuente (versión PHP, correos electrónicos, claves API, resultados de depuración).
 - [ ] Verificar Response Headers vía `BurpSuite` o en <https://securityheaders.com/>.
 - [ ] Confirmar que el encabezado `X-Powered-By` no esté configurado.
@@ -78,5 +95,13 @@
 - [ ] Verificar integridad del respaldo en entorno local.
 - [ ] Cambiar CSP de `report-mode` a `enforcement-mode`.
 - [ ] Verificar que `Cloudflare Turnstile` funciona en todos los formularios públicos.
+- [ ] Verificar enumeración de autores: visitar `/?author=1` — no debe revelar nombre de usuario del admin.
+- [ ] Ejecutar Wordfence CLI scan en copia local para escaneo completo sin restricciones de memoria (más completo que el scanner del `WP Admin`).
+- [ ] Confirmar que no hay archivos .php dentro de `wp-content/uploads/` (señal de webshell).
+- [ ] Verificar que `.htaccess` en `wp-content/uploads/` bloquea ejecución de PHP.
+- [ ] Verificar permisos de directorios críticos:
+    - `wp-config.php` → 600
+    - `uploads/`, `plugins/`, `themes/` → 755
+    - Nunca 777 en ningún archivo o directorio.
 
 ---
