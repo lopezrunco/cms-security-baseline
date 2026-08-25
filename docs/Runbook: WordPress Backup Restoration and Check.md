@@ -169,8 +169,8 @@ Navegar a `http://localhost:8090` y confirmar:
 
 ```bash
 docker compose down -v
+cd ..
+rm -rf restore-test
 ```
- 
-`-v` elimina la base de datos. Ningún dato sensible queda alojado localmente.
 
 ---
