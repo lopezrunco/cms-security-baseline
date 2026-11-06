@@ -60,11 +60,11 @@
 
 ### Plugins
 - [ ] Auditar todos los plugins instalados y eliminar los que no sean necesarios.
-- [ ] Para cada plugin: verificar en `Wordfence Threat Intel` o `WPScan` si hay CVEs conocidos en la versión instalada.
+- [ ] Para cada plugin: verificar en `Wordfence Threat Intel` o `WPScan` si hay CVEs conocidos en la versión instalada.[Ver guia](./docs/Run-WPScanfor-CVEs.md)
 - [ ] Actualizar todos los plugins a la última versión.
-- [ ] Instalar `Wordfence`/`Akeeba Admin Tools `(WAF y protección en el login).
+- [ ] Instalar `Wordfence`/`Imunify360`/`Akeeba Admin Tools `(WAF y protección en el login).
 - [ ] Instalar `WP Activity Log` para auditar actividad.
-- [ ] Instalar plugin para manejo de caché (`LiteSpeed Cache`).
+- [ ] Instalar plugin para manejo de caché (`LiteSpeed Cache`) y configurar [Ver guia](./docs/LiteSpeed-config.md).
 - [ ] Instalar plugin de optimización de imágenes (Imagify o ShortPixel) (Mejora el rendimiento y reduce la superficie de ataque frente a un DoS).
 
 ---
@@ -77,6 +77,7 @@
 - [ ] Verificar que el gateway de pago (`Mercado Pago`, `Handy`, etc.) está actualizado. Los plugins de pago son objetivos de alto valor y frecuentemente parchean vulnerabilidades silenciosamente.
 - [ ] Confirmar que el gateway maneja los datos de tarjeta en su propia infraestructura (nunca en el servidor del sitio).
 - [ ] Ejecutar DB migration de WooCommerce inmediatamente después de actualizar el plugin — no dejar pendiente.
+- [ ] En el caso que no se necesiten, eliminar funcionalidad de comentarios en blog y productos.
 
 ### Cuenta para el cliente
 - [ ] Crear cuenta de tipo **Gestor de la tienda** (nunca Administrador).
@@ -87,19 +88,19 @@
 
 ## Fase 4: Pre-lanzamiento y revisión de Seguridad
 - [ ] Ejecutar escáner de seguridad (`WPScan`, `Imunify`) en el sitio y resolver vulnerabilidades críticas.
-- [ ] Documentar decisiones de riesgo aceptado — cualquier vulnerabilidad que no se pueda remediar debe tener: rationale documentado, compensating controls aplicados, y fecha de revisión.
-- [ ] Verificar Response Headers vía `BurpSuite` o en <https://securityheaders.com/>.
+- [ ] Documentar las decisiones de riesgo aceptado: toda vulnerabilidad que no pueda remediarse debe contar con una justificación documentada, controles compensatorios aplicados y fecha de revisión.
+- [ ] Verificar Response Headers vía `BurpSuite` o en <https://securityheaders.com/>.[Encabezados base](./docs/Base%20headers.php)
 - [ ] Confirmar que el encabezado `X-Powered-By` no esté configurado.
-- [ ] Confirmar que la enumeración de usuarios desde la API devuelve 401 (`/wp-json/wp/v2/users`) 
+- [ ] Confirmar que la enumeración de usuarios desde la API devuelve 401 (`/wp-json/wp/v2/users`). [Ver guia](./docs/Disable-user-listing.php)
 - [ ] Verificar bloqueo de login (Protección de `Wordfence` contra ataques de fuerza bruta).
 - [ ] Verificar integridad del respaldo en entorno local. [Ver guia basica](./docs/Runbook:%20WordPress%20Backup%20Restoration%20and%20Check.md)
-- [ ] Cambiar CSP de `report-mode` a `enforcement-mode`.
+- [ ] Cambiar CSP de `report-mode` a `enforcement-mode`. [Ver script](./utils/check_csp.sh).
 - [ ] Verificar que `Cloudflare Turnstile` funciona en todos los formularios públicos.
 - [ ] Verificar enumeración de autores: visitar `/?author=1` — no debe revelar nombre de usuario del admin.
 - [ ] Ejecutar Wordfence CLI scan en copia local para escaneo completo sin restricciones de memoria (más completo que el scanner del `WP Admin`).
-- [ ] Verificar que no hay datos sensibles en el código fuente (versión PHP, correos electrónicos, claves API, resultados de depuración).
+- [ ] Verificar que no hay datos sensibles en el código fuente (versión PHP, correos electrónicos, claves API, resultados de depuración). [Ver script](./utils/scan_sensitive_data.sh)
 - [ ] Confirmar que no hay archivos .php dentro de `wp-content/uploads/` (señal de webshell).
-- [ ] Verificar que `.htaccess` en `wp-content/uploads/` bloquea ejecución de PHP.
+- [ ] Verificar que `.htaccess` en `wp-content/uploads/` bloquea ejecución de PHP. [Ver guia](./docs/Block-php-in-wpcontent-uploads.md)
 - [ ] Verificar permisos de directorios críticos:
     - `wp-config.php` → 600
     - `uploads/`, `plugins/`, `themes/` → 755
