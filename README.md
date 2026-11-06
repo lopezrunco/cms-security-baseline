@@ -13,5 +13,5 @@ Desarrollado desde una perspectiva de seguridad de aplicaciones (AppSec), basado
 
 - Para sitios nuevos => seguir [Checklist de Seguridad en Sitios Web.md](./Checklist%20de%20Seguridad%20en%20Sitios%20web.md) de principio a fin.
 - Para mantenimiento mensual => seguir [Mantenimiento y Actualizacion.md](./Mantenimiento%20y%20actualizacion.md).
-- Para testear un backup => seguir [Runbook: WordPress Backup Restoration.md](./docs/Runbook:%20WordPress%20Backup%20Restoration.md).
-- Para ver scripts para automatizar tareas => consultar el directorio [troubleshooting](./utils/).
+- Para testear un backup => seguir [Runbook: WordPress Backup Restoration.md](./docs/Runbook%20WordPress%20Backup%20Restoration%20and%20Check.md).
+- Para ver scripts para automatizar tareas => consultar el directorio [utils](./utils/).
