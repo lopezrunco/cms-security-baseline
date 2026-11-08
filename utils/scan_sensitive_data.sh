@@ -3,7 +3,7 @@
 # Usage: Type ./scan_sensitive_data.sh site.com.uy/public_html
 
 # Check if the directory is valid.
-if [ -z "$1" ]; then
+if [ -z "$1" ]; then        # Run if the users didn't pass a path.
     echo -e "\e[31m[!] Error: Please, write a valid path to the directory for scanning.\e[0m"
     echo -e "Usage: $0 /path/to/public_html"
     exit 1
@@ -13,7 +13,7 @@ TARGET_DIR="$1"
 REPORT_FILE="sensitive_data_report.txt"
 
 # Validate that the directory actually exists.
-if [ ! -dir "$TARGET_DIR" ]; then
+if [ ! -d "$TARGET_DIR" ]; then
     echo -e "\e[31m[!] Error: The directory '$TARGET_DIR' does not exist.\e[0m"
     exit 1
 fi
@@ -46,24 +46,24 @@ scan_and_report() {
     local title="$1"
     local grep_command="$2"
     local tmp_file
-    tmp_file=$(mktemp)
-    
+    tmp_file=$(mktemp)                      # Create a unique file to hold the results.
+
     echo "--------------------------------------------------" >> "$REPORT_FILE"
     echo "[+] SCANNING: $title" >> "$REPORT_FILE"
     echo "--------------------------------------------------" >> "$REPORT_FILE"
-    
-    eval "$grep_command" > "$tmp_file"
-    
+
+    eval "$grep_command" > "$tmp_file"      # eval runs the string as a command and the output goes to the temp file.
+
     local count
-    count=$(wc -l < "$tmp_file")
-    
-    if [ "$count" -eq 0 ]; then
+    count=$(wc -l < "$tmp_file")            # Counts the lines on the temp file, which is the number of matches found.
+
+    if [ "$count" -eq 0 ]; then             # If there are no matches, run the following.
         echo "    -> NO FINDINGS OR LEAKS DETECTED." >> "$REPORT_FILE"
     else
-        cat "$tmp_file" >> "$REPORT_FILE"
+        cat "$tmp_file" >> "$REPORT_FILE"   # Copies the matches into the report file.
     fi
-    echo "" >> "$REPORT_FILE"
-    
+    echo "" >> "$REPORT_FILE"               # Add a blank line.
+
     rm -f "$tmp_file"
     echo "$count"
 }
@@ -71,8 +71,13 @@ scan_and_report() {
 # 1. API keys & passwords
 # The regex requires explicit asination and rejects lines that start with common comments.
 # Ignore lines starting with *, // o #
+# -r searches recursively
+# -n shows the line number
+# -P uses Perl-compatible regex (GNU grep only)
+# -H always shows the file name
+# -o prints only the matched part, not the whole line
 grep_api="grep -rnPHo $EXCLUDE_DIRS $EXCLUDE_FILES '^[^#\/\*]*?\.{0,15}(api_key|api[-_]key|secret[-_]key|auth[-_]token|password|passwd|private[-_]key)\s*=\s*[\"'\''\\][a-zA-Z0-9_\.\-]{10,}[\"'\''\\]{0,15}' '$TARGET_DIR'"
-TOTAL_API=$(scan_and_report "API keys, Passwords y Tokens" "$grep_api")
+TOTAL_API=$(scan_and_report "API keys, passwords and tokens" "$grep_api")
 echo -e "    \e[32m[✓]\e[0m Credentials module completed."
 
 # 2. Emails (Ignores native code & design extensions).
@@ -102,7 +107,7 @@ echo -e "\e[34m==================================================\e[0m"
 print_summary_line() {
     local name="$1"
     local quantity="$2"
-    if [ "$quantity" -gt 0 ]; then
+    if [ "$quantity" -gt 0 ]; then # -gt means greater than.
         echo -e "  $name: \e[1;31m$quantity alerts\e[0m"
     else
         echo -e "  $name: \e[32mClean (0)\e[0m"

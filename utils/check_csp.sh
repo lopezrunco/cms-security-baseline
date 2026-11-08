@@ -20,18 +20,18 @@ HEADERS=$(curl -sIL -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" "$URL")
 CSP_ACTIVE=$(echo "$HEADERS" | grep -i "^content-security-policy:")
 CSP_REPORT=$(echo "$HEADERS" | grep -i "^content-security-policy-report-only:")
 
-# Diagnóstico
-if [ -n "$CSP_ACTIVE" ]; then
+# Diagnosis
+if [ -n "$CSP_ACTIVE" ]; then # Run if an enforcing CSP header was found.
     echo -e " \033[0;32m[SUCCESS] The CSP is on Enforcement-Mode (Active mode).\033[0m"
     echo -e "--------------------------------------------------"
     echo "$CSP_ACTIVE" | tr -d '\r'
     echo -e "--------------------------------------------------"
-elif [ -n "$CSP_REPORT" ]; then
+elif [ -n "CSP_REPORT" ]; then # Run if there is no enforcing header but there is a report-only one.
     echo -e " \033[0;33m[ALERT] The politics still on 'Report-Only'. The browser won't block anything.\033[0m"
     echo -e "--------------------------------------------------"
     echo "$CSP_REPORT" | tr -d '\r'
     echo -e "--------------------------------------------------"
-else
+else # If neither exists, print an error.
     echo -e " \033[0;31m[ERROR] Couldn't find any Content-Security-Policy header on this site.\033[0m"
 fi
 echo "=================================================="
