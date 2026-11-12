@@ -15,7 +15,7 @@
 - [ ] Implementar factor de autenticación múltiple en cuentas de administrador.
 - [ ] Mover páginas de acceso (como `wp-login` o `administrator`) a una URL personalizada (WPS Hide Login plugin).
 - [ ] Si no se necesita, deshabilitar `XML-RPC` en `.htaccess`. [Ver código](./docs/Disable-XML-RPC.php)
-- [ ] Agregar encabezados de seguridad vía `.htaccess` (CSP report-only, X-Frame-Options, HSTS, Permissions-Policy).
+- [ ] Agregar encabezados de seguridad vía `.htaccess` (CSP report-only, X-Frame-Options, HSTS, Permissions-Policy). [Ver guia](./docs/Check-security-headers.md)
 - [ ] Establecer los permisos de `wp-config.php` en 640 vía cPanel.
 - [ ] Deshabilitar la edición de archivos de plantilla o plugins vía administración. [Ver código](./docs/Disable-file-editing-WP-dashboard.php)
 - [ ] Forzar el uso de SSL para administradores. [Ver código](./docs/Enable-forced-SSL-for-admin.php)
@@ -42,7 +42,7 @@
 - [ ] Chequear que ModSecurity WAF esté habilitado en cPanel.
 - [ ] Restringir el listado de directorio (Agregar la linea `Options -Indexes` en `.htaccess`).
 - [ ] Confirmar que la versión de PHP sea reciente.
-- [ ] Confirmar que NO existen archivos de backup en `public_html` (`.wpress`, `.tar.gz`, `.zip`, `.sql`).
+- [ ] Confirmar que NO existen archivos de backup en `public_html` (`.wpress`, `.tar.gz`, `.zip`, `.sql`). [Ver código](./docs/Check-backup-files.sh)
 - [ ] Verificar accesibilidad directa de directorios de backup visitando sus URLs en el navegador.
 
 ---
