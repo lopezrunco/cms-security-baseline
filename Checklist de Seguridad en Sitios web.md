@@ -60,7 +60,7 @@
 
 ### Plugins
 - [ ] Auditar todos los plugins instalados y eliminar los que no sean necesarios.
-- [ ] Para cada plugin: verificar en `Wordfence Threat Intel` o `WPScan` si hay CVEs conocidos en la versión instalada.[Ver guia](./docs/Run-WPScanfor-CVEs.md)
+- [ ] Para cada plugin: verificar en `Wordfence Threat Intel` o `WPScan` si hay CVEs conocidos en la versión instalada.[Ver guia](./docs/Run-WPScan-for-CVEs.md)
 - [ ] Actualizar todos los plugins a la última versión.
 - [ ] Instalar `Wordfence`/`Imunify360`/`Akeeba Admin Tools `(WAF y protección en el login).
 - [ ] Instalar `WP Activity Log` para auditar actividad.
