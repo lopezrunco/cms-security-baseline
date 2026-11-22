@@ -1,17 +1,17 @@
 # CMS Security Baseline
 
-Framework de seguridad y mantenimiento para sitios web WordPress y Joomla en entornos de hosting compartido con cPanel.
+Security and maintenance framework for WordPress and Joomla websites hosted in shared hosting environments with cPanel.
 
-Desarrollado desde una perspectiva de seguridad de aplicaciones (AppSec), basado en incidentes reales de producción.
+Developed from an Application Security (AppSec) perspective and based on real-world production incidents.
 
-## Stack cubierto
+## Covered Stack
 
 - **Hosting:** cPanel
 - **CMS:** WordPress + WooCommerce / Joomla + VirtueMart
 
-## Cómo usar este repositorio
+## How to Use This Repository
 
-- Para sitios nuevos => seguir [Checklist de Seguridad en Sitios Web.md](./Checklist%20de%20Seguridad%20en%20Sitios%20web.md) de principio a fin.
-- Para mantenimiento mensual => seguir [Mantenimiento y Actualizacion.md](./Mantenimiento%20y%20actualizacion.md).
-- Para testear un backup => seguir [Runbook: WordPress Backup Restoration.md](./docs/Runbook%20WordPress%20Backup%20Restoration%20and%20Check.md).
-- Para ver scripts para automatizar tareas => consultar el directorio [utils](./utils/).
+- For new websites => follow [Website Security Checklist.md](./Website%20Security%20Checklist.md) from beginning to end.
+- For monthly maintenance => follow [Maintenance and Updates.md](./Maintenance%20and%20Updates.md).
+- To test a backup => follow [Runbook: WordPress Backup Restoration.md](./docs/Runbook%20WordPress%20Backup%20Restoration%20and%20Check.md).
+- To find scripts for automating tasks => check the [utils](./utils/) directory.
