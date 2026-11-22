@@ -1,4 +1,4 @@
-1. Crear o modificar el archivo `.htaccess` en `wp-content/uploads/` y agregar las siguientes lineas:
+1. Create or edit the `.htaccess` file in `wp-content/uploads/` and add the following lines:
 
 ```sh
 <FilesMatch "\.(?i:php|php3|php4|php5|php7|php8|phtml|pht)$">
@@ -12,14 +12,14 @@
 </FilesMatch>
 ```
 
-2. Verificar: Crear un archivo temporal llamado `test.php` dentro de `wp-content/uploads/` con el siguiente código: 
+2. Verify: Create a temporary file named `test.php` inside `wp-content/uploads/` with the following code:
 
 ```php
 <?php echo "Vulnerable"; ?>
 ```
 
-3. Desde la terminal correr `curl -I https://dominio.com.uy/wp-content/uploads/test.php`.
+3. From the terminal, run `curl -I https://dominio.com.uy/wp-content/uploads/test.php`.
 
-4. Si el servidor devuelve un error 403 Forbidden (o 404), la protección quedó activa con éxito.
+4. If the server returns a 403 Forbidden error (or 404), the protection is active and working.
 
-5. Eliminar el archivo `test.php` despues de terminada la prueba.
+5. Delete the `test.php` file once the test is complete.

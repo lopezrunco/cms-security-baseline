@@ -1,4 +1,4 @@
-<!-- Seguros de usar en cualquier sitio de Wordpress. Ajustar de forma acorde en cada caso. -->
+<!-- Safe to use in any Wordpress site with the proper adjustments. -->
 
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"

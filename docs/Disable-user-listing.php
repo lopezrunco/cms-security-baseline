@@ -1,9 +1,9 @@
-<!-- Agregar este codigo en functions.php -->
+<!-- Add this code to functions.php -->
 
 add_filter('rest_endpoints', function($endpoints) {
-    // Verificar si la ruta de usuarios existe en la petición
+    // Verify if the "users" route exists in the request
     if (isset($endpoints['/wp/v2/users'])) {
-        // Si el usuario actual no está autenticado, bloquear el acceso
+        // If the current user is not authenticated, block the access.
         if (!current_user_can('read')) {
             unset($endpoints['/wp/v2/users']);
             unset($endpoints['/wp/v2/users/(?P<id>[\d]+)']);
@@ -13,8 +13,8 @@ add_filter('rest_endpoints', function($endpoints) {
 });
 
 
-<!-- Vertificar corriendo este comando: 
+<!-- Verify by running: 
 
 curl -I https://sitio.uy/wp-json/wp/v2/users 
 
-Deberia de retornar 404 -->
+It should return 404 -->

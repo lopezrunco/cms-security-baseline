@@ -1,94 +1,94 @@
-# Checklist de configuración del plugin LiteSpeed Cache en sitios WordPress
+# LiteSpeed Cache Plugin Configuration Checklist for WordPress Sites
 
-**Última actualización:** 04-11-2026
+**Last updated:** 04-11-2026
 
 ---
 
-## 1: Caché
+## 1: Cache
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| Activa cache | ON | Función principal. |
-| Cachear usuarios con sesión iniciada | OFF | Evita que se filtre contenido de un usuario con sesión a otro. |
-| Cachear comentaristas | OFF | Mismo motivo. |
-| Cachear API REST | OFF | Las respuestas REST pueden contener datos privados. |
-| Cachear página de acceso | OFF | Evita nonces o tokens obsoletos en la página de acceso. |
-| Cache móvil | OFF | Activar solo si el tema sirve HTML distinto a móviles. |
-| Lista de User Agents móviles | Por defecto | Solo importa si Cache móvil está en ON. |
-| URIs cacheadas privadamente | Vacío | Gestiona las rutas sensibles en la pantalla 4. |
-| Forzar URLs en caché | Vacío | Anula las exclusiones. |
-| Forzar URIs de caché pública | Vacío | Igual que el anterior, y el más riesgoso. |
-| Ignorar cadenas de consulta | Por defecto (`fbclid`, `gclid`, `utm*`, `_ga`) | Solo parámetros de seguimiento. Nunca agregar parámetros que cambien el contenido. |
+| Enable Cache | ON | Main function. |
+| Cache Logged-in Users | OFF | Prevents content from one logged-in user leaking to another. |
+| Cache Commenters | OFF | Same reason. |
+| Cache REST API | OFF | REST responses may contain private data. |
+| Cache Login Page | OFF | Avoids stale nonces or tokens on the login page. |
+| Cache Mobile | OFF | Enable only if the theme serves different HTML to mobile devices. |
+| List of Mobile User Agents | Default | Only matters if Cache Mobile is ON. |
+| Private Cached URIs | Empty | Manage sensitive routes in screen 4. |
+| Force Cache URIs | Empty | Overrides the exclusions. |
+| Force Public Cache URIs | Empty | Same as the previous one, and the riskiest. |
+| Drop Query String | Default (`fbclid`, `gclid`, `utm*`, `_ga`) | Tracking parameters only. Never add parameters that change the content. |
 
 ## 2: TTL
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| TTL público (604800) | Mantener, o bajar a 86400 si el contenido cambia a menudo | No es una vulnerabilidad, pero un TTL más corto limita cuánto tiempo viven las páginas obsoletas. |
-| TTL privado (1800) | Mantener | Ya es corto. |
-| TTL página principal (604800) | Mantener | |
-| TTL Feed (604800) | Mantener | Los feeds son públicos. |
-| TTL REST (604800) | 0 | Defensa en profundidad: Desactiva el caché REST aunque alguien active Cachear API REST más adelante. |
-| TTL códigos de estado (`404 3600`, `500 600`) | Mantener | |
+| Default Public Cache TTL (604800) | Keep, or lower to 86400 if content changes often | Not a vulnerability, but a shorter TTL limits how long stale pages live. |
+| Default Private Cache TTL (1800) | Keep | Already short. |
+| Default Front Page TTL (604800) | Keep | |
+| Default Feed TTL (604800) | Keep | Feeds are public. |
+| Default REST TTL (604800) | 0 | Defense in depth: disables REST caching even if someone enables Cache REST API later. |
+| Default HTTP Status Code Page TTL (`404 3600`, `500 600`) | Keep | |
 
-## 3: Purgar
+## 3: Purge
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| Purgar todo al actualizar | ON | Tras una actualización de seguridad, las páginas y recursos en caché provienen del código ya parcheado. |
-| Reglas de purga automática | Marcar todo | Lo más simple y seguro para un sitio pequeño. |
-| Servir contenido rancio | OFF | Por diseño sirve copias antiguas. |
-| URLs de purga programada | Vacío | Opcional. |
-| Hora de purga programada | Vacío | |
-| Ganchos de purgar todo | Por defecto | |
+| Purge All On Upgrade | ON | After a security update, cached pages and resources come from the already-patched code. |
+| Auto Purge Rules For Publish/Update | Check all | Simplest and safest for a small site. |
+| Serve Stale | OFF | By design it serves old copies. |
+| Scheduled Purge URLs | Empty | Optional. |
+| Scheduled Purge Time | Empty | |
+| Purge All Hooks | Default | |
 
-## 4: Excluir
+## 4: Excludes
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| URIs a no cachear | Agregar -una por línea- rutas de reservas, formularios de contacto y como `/contacto`, `/turnos`, `/reservar`, `/mi-cuenta`. | Mantiene fuera del caché las páginas con formularios y tokens. |
-| Cadenas de consulta a no cachear | Agregar lo que los formularios o plugins usen para llevar estado, como `token`, `session`, `key`. | Opcional, pero seguro. |
-| Categorías / Etiquetas a no cachear | Vacío salvo que haga falta | |
-| Cookies a no cachear | Agregar las cookies que establezca cualquier plugin de reservas o formularios, si las hay. | Evita cachear respuestas personalizadas. |
-| User Agents a no cachear | Vacío | |
-| No cachear perfiles | Marcar Administrator, Editor, Author, Contributor | Roles de mantenimiento nunca deben recibir páginas en caché. Marcar también Subscriber si hay usuarios reales con cuenta. |
+| Do Not Cache URIs | Add, one per line, booking and contact form paths such as `/contacto`, `/turnos`, `/reservar`, `/mi-cuenta`. | Keeps pages with forms and tokens out of the cache. |
+| Do Not Cache Query Strings | Add whatever forms or plugins use to carry state, such as `token`, `session`, `key`. | Optional, but safe. |
+| Do Not Cache Categories / Tags | Empty unless needed | |
+| Do Not Cache Cookies | Add any cookies set by booking or form plugins, if any. | Avoids caching personalized responses. |
+| Do Not Cache User Agents | Empty | |
+| Do Not Cache Roles | Check Administrator, Editor, Author, Contributor | Maintenance roles should never receive cached pages. Also check Subscriber if there are real users with accounts. |
 
 ## 5: ESI
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| Activar ESI | OFF | Añade complejidad y superficie de ataque. No es necesario si no hay tráfico público con sesión iniciada. |
-| Cachear barra de administrador | OFF | |
-| Cachear formulario de comentario | OFF | |
-| Nonces de ESI | Dejar como está | Solo relevante si ESI está en ON. |
-| Grupos de variación | Dejar (Administrator 99, el resto 0) | Solo relevante si ESI está en ON. |
+| Enable ESI | OFF | Adds complexity and attack surface. Not needed if there is no public logged-in traffic. |
+| Cache Admin Bar | OFF | |
+| Cache Comment Form | OFF | |
+| ESI Nonces | Leave as is | Only relevant if ESI is ON. |
+| Vary Group | Leave (Administrator 99, the rest 0) | Only relevant if ESI is ON. |
 
-Si alguna vez activas ESI, vuelve a probar todos los formularios y todas las vistas con sesión iniciada.
+If you ever enable ESI, re-test all forms and all logged-in views.
 
-## 6: Caché de objetos
+## 6: Object Cache
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| Caché de objetos | OFF | Las extensiones Redis y Memcached aparecen como *Desactivadas*, así que no hay nada a lo que conectarse. |
-| Método / Host / Puerto / Usuario / Contraseña / ID de base de datos | Dejar valores por defecto | Irrelevante mientras esté en OFF. |
-| Conexión persistente | OFF | |
-| Caché de WP-Admin | OFF | Los datos obsoletos en el administrador son un riesgo. |
+| Object Cache | OFF | The Redis and Memcached extensions show as *Disabled*, so there is nothing to connect to. |
+| Method / Host / Port / Username / Password / Redis Database ID | Leave defaults | Irrelevant while OFF. |
+| Persistent Connection | OFF | |
+| Cache WP-Admin | OFF | Stale data in the admin is a risk. |
 
-Si la activas más adelante, usa Redis o Memcached en localhost o en un socket UNIX. Exige contraseña, nunca expongas el puerto y usa un prefijo de clave único por sitio.
+If you enable it later, use Redis or Memcached on localhost or a UNIX socket. Require a password, never expose the port, and use a unique key prefix per site.
 
-## 7: Caché del navegador
+## 7: Browser Cache
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| Caché del navegador | ON | Solo archivos estáticos. Observacion: Edita `.htaccess`. |
-| TTL caché de navegador (31557600 = aproximadamente 1 año) | Mantener si los recursos tienen versión. Si no, usar 604800. | Un año está bien para archivos versionados y es riesgoso para los que no lo están. |
+| Browser Cache | ON | Static files only. Note: edits `.htaccess`. |
+| Browser Cache TTL (31557600 = approximately 1 year) | Keep if resources are versioned. Otherwise, use 604800. | One year is fine for versioned files and risky for unversioned ones. |
 
-## 8: Avanzado
+## 8: Advanced
 
-| Ajuste | Valor | Comentarios |
+| Setting | Value | Comments |
 |---|---|---|
-| TTL de caché AJAX | Vacío | Cachear acciones AJAX puede exponer datos dinámicos. |
-| Cookie de acceso | Por defecto `_lscache_vary` | Cambiar solo si varias instalaciones de WordPress comparten dominio. |
-| Variar cookies | Vacío | |
-| Mejorar compatibilidad HTTP/HTTPS | OFF | Fuerza HTTPS en todo el sitio con HSTS en su lugar. |
-| Clic instantáneo | OFF | La precarga genera peticiones GET extra y aumenta la carga del servidor. |
+| AJAX Cache TTL | Empty | Caching AJAX actions can expose dynamic data. |
+| Login Cookie | Default `_lscache_vary` | Change only if several WordPress installations share a domain. |
+| Vary Cookies | Empty | |
+| Improve HTTP/HTTPS Compatibility | OFF | Forces HTTPS across the whole site with HSTS in place. |
+| Instant Click | OFF | Preloading generates extra GET requests and increases server load. |

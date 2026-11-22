@@ -1,4 +1,4 @@
-1. Correr este script en la terminal, reemplazando el API token obtenido en WPScan:
+1. Run this script, replacing the API token obtained from WPScan:
 
 ```sh
 wpscan --url https://website.com.uy \
@@ -10,7 +10,7 @@ wpscan --url https://website.com.uy \
   -o cve-scan-results.txt
 ```
 
-2. Buscar por alertas: 
+2. Search for alerts: 
 
 ```sh
 grep "\[!\]" cve-scan-results.txt

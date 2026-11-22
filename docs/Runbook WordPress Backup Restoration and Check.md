@@ -1,38 +1,38 @@
-# Runbook: Restauración de sitios WordPress en entorno local usando Docker
+# Runbook: Restoring WordPress Sites in a Local Environment Using Docker
 
 **Stack:** cPanel - Docker - MySQL - WordPress  
-**Última actualización:** 23-07-2026
-**Objetivo:** Probar la integridad de los respaldos sin tocar produccion.
+**Last updated:** 23-07-2026
+**Objective:** Test backup integrity without touching production.
 
 ---
 
-## Prerrequisitos
+## Prerequisites
 
-- `Docker` y `Docker Compose` instalados.
-- Respaldo completo desde `cPanel` descargado localmente (`.tar.gz`).
+- `Docker` and `Docker Compose` installed.
+- Full `cPanel` backup downloaded locally (`.tar.gz`).
 
 ---
 
-## Paso 1: Descargar el respaldo completo desde cPanel => Asistente de copias de seguridad
+## Step 1: Download the full backup from cPanel => Backup Wizard
 
-Esto generará un archivo `.tar.gz` que contiene:
-- `homedir/public_html.zip`: Todos los archivos de `WordPress`.
-- `mysql/your_database.sql`: Volcado completo de la base de datos.
+This will generate a `.tar.gz` file containing:
+- `homedir/public_html.zip`: All `WordPress` files.
+- `mysql/your_database.sql`: Full database dump.
 
-## Paso 2: Preparar el directorio de trabajo
+## Step 2: Prepare the working directory
 
 ```bash
 mkdir restore-test
 cd restore-test
 ```
 
-Extraer el respaldo:
+Extract the backup:
 
 ```bash
 tar -xzf your_backup_file.tar.gz
 ```
 
-Extraer los archivos de `WordPress`:
+Extract the `WordPress` files:
 
 ```bash
 cd backup-*/homedir
@@ -40,14 +40,14 @@ unzip public_html.zip -d ../../wp-restore
 cd ../../
 ```
 
-Verificar estructura:
+Verify the structure:
 
 ```bash
-ls wp-restore/public_html/wp-config.php  # Debe existir
-ls backup-*/mysql/*.sql                  # Debe existir
+ls wp-restore/public_html/wp-config.php  # Must exist
+ls backup-*/mysql/*.sql                  # Must exist
 ```
 
-## Paso 3: Crear el archivo docker-compose.yml
+## Step 3: Create the docker-compose.yml file
 
 ```yaml
 services:
@@ -80,41 +80,41 @@ volumes:
   db_data:
 ```
 
-Reemplazar `your_database_name` con el nombre real del archivo `.sql` (omitir la extension).
+Replace `your_database_name` with the actual name of the `.sql` file (omit the extension).
 
-## Paso 4: Iniciar contenedores
+## Step 4: Start the containers
 
 ```bash
 docker compose up -d
-docker compose ps       # Verificar que tanto la base de datos como WordPress están corriendo.
+docker compose ps       # Verify that both the database and WordPress are running.
 ```
 
-## Problemas comunes en esta etapa
+## Common problems at this stage
 
-### Problema 1: Puerto ya en uso
+### Problem 1: Port already in use
 
 ```
 Bind for 0.0.0.0:8090 failed: port is already allocated
 ```
-Cambiar el puerto en el archivo `docker-compose.yml`: `8090:80` => `8091:80` o cualquier otro puerto libre.
+Change the port in the `docker-compose.yml` file: `8090:80` => `8091:80` or any other free port.
 
-### Problema 2: Error de propiedad de archivos (Error 403)
+### Problem 2: File ownership error (Error 403)
 
 ```
 AH00529: unable to check htaccess file, ensure it is readable
 ```
-Corregir propiedad:
+Fix ownership:
 ```bash
 docker exec -it <wordpress-container-name> chown -R www-data:www-data /var/www/html
 ```
 
-### Problema 3: Directivas de LiteSpeed rompiendo Apache (Error 500)
+### Problem 3: LiteSpeed directives breaking Apache (Error 500)
 
 ```
 Invalid command 'CacheLookup'
 Invalid command 'vErrorDocument'
 ```
-Eliminar bloques de código de `LiteSpeed` en el archivo `.htaccess` dentro del contenedor:
+Remove the `LiteSpeed` code blocks from the `.htaccess` file inside the container:
 ```bash
 docker exec -it <wordpress-container-name> bash
 sed -i '/# BEGIN LSCACHE/,/# END LSCACHE/d' /var/www/html/.htaccess
@@ -123,26 +123,26 @@ sed -i 's/vErrorDocument/ErrorDocument/' /var/www/html/.htaccess
 exit
 ```
 
-### Problema 4: Redireccion HTTPS causando error SSL
+### Problem 4: HTTPS redirect causing an SSL error
 
-El bloque `Forzar HTTPS` en el archivo `.htaccess` redirige hacia `https://localhost`, que no tiene un certificado `SSL`.
+The `Force HTTPS` block in the `.htaccess` file redirects to `https://localhost`, which does not have an `SSL` certificate.
  
-La solución es eliminar el bloque `Forzar HTTPS` dentro del contenedor:
+The solution is to remove the `Force HTTPS` block inside the container:
 ```bash
 docker exec -it <wordpress-container-name> bash
 sed -i '/# Force HTTPS (safety net)/,/^$/d' /var/www/html/.htaccess
 exit
 ```
  
-También limpiar la caché `HSTS` en el navegador:
-- **Firefox:** Configuración => Privacidad y seguridad => Cookies y datos del sitio => Administrar datos => eliminar `localhost`.
-- **Chrome:** acceder a `chrome://net-internals/#hsts` => Eliminar dominio: `localhost`.
+Also clear the `HSTS` cache in the browser:
+- **Firefox:** Settings => Privacy & Security => Cookies and Site Data => Manage Data => delete `localhost`.
+- **Chrome:** go to `chrome://net-internals/#hsts` => Delete domain: `localhost`.
 
-### Problema 5: Error de conexión con la base de datos
+### Problem 5: Database connection error
 
-Este error es disparado porque `wp-config.php` aun tiene las credenciales de produccion.
+This error is triggered because `wp-config.php` still has the production credentials.
  
-La solución es actualizar las credenciales dentro del contenedor:
+The solution is to update the credentials inside the container:
 ```bash
 docker exec -it <wordpress-container-name> bash
 sed -i "s/define( 'DB_NAME'.*/define( 'DB_NAME', 'your_database_name' );/" /var/www/html/wp-config.php
@@ -152,20 +152,20 @@ sed -i "s/define( 'DB_HOST'.*/define( 'DB_HOST', 'db' );/" /var/www/html/wp-conf
 exit
 ```
  
-Verificar:
+Verify:
 ```bash
 docker exec -it <wordpress-container-name> grep -E "DB_NAME|DB_USER|DB_PASSWORD|DB_HOST" /var/www/html/wp-config.php
 ```
 
-## Paso 5: Verificar la restauración
+## Step 5: Verify the restoration
 
-Navegar a `http://localhost:8090` y confirmar:
-- La pagina de inicio carga correctamente.
-- Productos/contenido visible.
-- Inicio de sesión en el administrador funciona correctamente.
-- No hay errores PHP visibles.
+Navigate to `http://localhost:8090` and confirm:
+- The home page loads correctly.
+- Products/content are visible.
+- Login to the admin works correctly.
+- No PHP errors are visible.
 
-## Paso 6: Limpieza
+## Step 6: Cleanup
 
 ```bash
 docker compose down -v
